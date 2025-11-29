@@ -6,7 +6,7 @@ import { randomUUID } from 'node:crypto';
 export class ArtistService {
   private artists = [];
 
-  private findArtist(id: string) {
+  findArtist(id: string) {
     const artist = this.artists.find(
       (currentArtist) => currentArtist.id === id,
     );
