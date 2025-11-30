@@ -1,5 +1,6 @@
 import {
   ForbiddenException,
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -55,17 +56,21 @@ export class UserService {
   }
 
   update(id: string, dto: UpdatePasswordDto) {
+    if (!dto.oldPassword || !dto.newPassword) {
+      throw new BadRequestException('Invalid password data');
+    }
+
     const user = this.findById(id);
 
-    if (user.password === dto.oldPassword) {
-      user.password = dto.newPassword;
-      user.version += 1;
-      user.updatedAt = Date.now();
-
-      return this.omitPassword(user);
-    } else {
+    if (user.password !== dto.oldPassword) {
       throw new ForbiddenException('Wrong current password');
     }
+
+    user.password = dto.newPassword;
+    user.version += 1;
+    user.updatedAt = Date.now();
+
+    return this.omitPassword(user);
   }
 
   delete(id: string) {
