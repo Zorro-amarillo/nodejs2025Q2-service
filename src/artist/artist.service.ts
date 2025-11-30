@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { randomUUID } from 'node:crypto';
 
@@ -6,7 +10,35 @@ import { randomUUID } from 'node:crypto';
 export class ArtistService {
   private artists = [];
 
-  findArtist(id: string) {
+  private checkById(id: string) {
+    try {
+      this.findById(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new BadRequestException('Artist with this id does not exist');
+      }
+
+      throw err;
+    }
+  }
+
+  validateId(id: string | null | undefined) {
+    if (id === undefined) {
+      throw new BadRequestException(
+        'Request body does not contain required field (artistId)',
+      );
+    }
+
+    if (id !== null) {
+      if (typeof id !== 'string') {
+        throw new BadRequestException('Invalid artistId format');
+      }
+
+      this.checkById(id);
+    }
+  }
+
+  findById(id: string) {
     const artist = this.artists.find(
       (currentArtist) => currentArtist.id === id,
     );
@@ -23,7 +55,7 @@ export class ArtistService {
   }
 
   getById(id: string) {
-    return this.findArtist(id);
+    return this.findById(id);
   }
 
   create(dto: CreateArtistDto) {
@@ -38,7 +70,7 @@ export class ArtistService {
   }
 
   update(id: string, dto: CreateArtistDto) {
-    const artist = this.findArtist(id);
+    const artist = this.findById(id);
 
     Object.assign(artist, {
       ...dto,
@@ -48,7 +80,7 @@ export class ArtistService {
   }
 
   delete(id: string) {
-    this.findArtist(id);
+    this.findById(id);
     this.artists = this.artists.filter((artist) => artist.id !== id);
   }
 }

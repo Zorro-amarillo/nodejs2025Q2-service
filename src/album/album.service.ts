@@ -1,7 +1,7 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { randomUUID } from 'node:crypto';
@@ -13,37 +13,35 @@ export class AlbumService {
 
   private albums = [];
 
-  private checkArtist(id: string) {
+  private checkById(id: string) {
     try {
-      this.artistService.findArtist(id);
+      this.findById(id);
     } catch (err) {
-      console.log(err);
-
       if (err instanceof NotFoundException) {
-        throw new BadRequestException('Artist with this id does not exist');
+        throw new BadRequestException('Album with this id does not exist');
       }
 
       throw err;
     }
   }
 
-  private validateArtistId(id: string | null | undefined) {
+  validateId(id: string | null | undefined) {
     if (id === undefined) {
       throw new BadRequestException(
-        'Request body does not contain required field (artistId)',
+        'Request body does not contain required field (albumId)',
       );
     }
 
     if (id !== null) {
       if (typeof id !== 'string') {
-        throw new BadRequestException('Invalid artistId format');
+        throw new BadRequestException('Invalid albumId format');
       }
 
-      this.checkArtist(id);
+      this.checkById(id);
     }
   }
 
-  findAlbum(id: string) {
+  findById(id: string) {
     const album = this.albums.find((currentAlbum) => currentAlbum.id === id);
 
     if (!album) {
@@ -58,11 +56,11 @@ export class AlbumService {
   }
 
   getById(id: string) {
-    return this.findAlbum(id);
+    return this.findById(id);
   }
 
   create(dto: CreateAlbumDto) {
-    this.validateArtistId(dto.artistId);
+    this.artistService.validateId(dto.artistId);
 
     const newAlbum = {
       id: randomUUID(),
@@ -75,9 +73,9 @@ export class AlbumService {
   }
 
   update(id: string, dto: CreateAlbumDto) {
-    const album = this.findAlbum(id);
+    const album = this.findById(id);
 
-    this.validateArtistId(dto.artistId);
+    this.artistService.validateId(dto.artistId);
 
     Object.assign(album, {
       ...dto,
@@ -87,7 +85,7 @@ export class AlbumService {
   }
 
   delete(id: string) {
-    this.findAlbum(id);
+    this.findById(id);
     this.albums = this.albums.filter((artist) => artist.id !== id);
   }
 }
