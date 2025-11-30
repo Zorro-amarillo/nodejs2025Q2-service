@@ -18,7 +18,7 @@ export class UserService {
     return restProps;
   }
 
-  private findUser(id: string) {
+  private findById(id: string) {
     const user = this.users.find((currentUser) => currentUser.id === id);
 
     if (!user) {
@@ -35,7 +35,7 @@ export class UserService {
   }
 
   getById(id: string) {
-    const user = this.findUser(id);
+    const user = this.findById(id);
 
     return this.omitPassword(user);
   }
@@ -55,7 +55,7 @@ export class UserService {
   }
 
   update(id: string, dto: UpdatePasswordDto) {
-    const user = this.findUser(id);
+    const user = this.findById(id);
 
     if (user.password === dto.oldPassword) {
       user.password = dto.newPassword;
@@ -69,7 +69,7 @@ export class UserService {
   }
 
   delete(id: string) {
-    this.findUser(id);
+    this.findById(id);
     this.users = this.users.filter((user) => user.id !== id);
   }
 }
