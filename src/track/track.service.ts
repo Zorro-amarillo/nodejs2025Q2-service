@@ -8,6 +8,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { randomUUID } from 'node:crypto';
 import { ArtistService } from 'src/artist/artist.service';
 import { AlbumService } from 'src/album/album.service';
+import { FavsService } from 'src/favs/favs.service';
 
 @Injectable()
 export class TrackService {
@@ -15,6 +16,8 @@ export class TrackService {
     @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,
     private albumService: AlbumService,
+    @Inject(forwardRef(() => FavsService))
+    private favsService: FavsService,
   ) {}
 
   private tracks = [];
@@ -67,6 +70,8 @@ export class TrackService {
   delete(id: string) {
     this.findById(id);
     this.tracks = this.tracks.filter((track) => track.id !== id);
+
+    this.favsService.deleteTrack(id);
   }
 
   clearArtistProp(artistId: string) {

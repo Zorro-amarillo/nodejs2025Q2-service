@@ -6,7 +6,11 @@ import { AlbumModule } from 'src/album/album.module';
 import { ArtistModule } from 'src/artist/artist.module';
 
 @Module({
-  imports: [TrackModule, AlbumModule, forwardRef(() => ArtistModule)],
+  imports: [
+    forwardRef(() => TrackModule),
+    AlbumModule,
+    forwardRef(() => ArtistModule),
+  ],
   controllers: [FavsController],
   providers: [FavsService],
   exports: [FavsService],
