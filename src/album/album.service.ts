@@ -100,7 +100,7 @@ export class AlbumService {
     this.albums = this.albums.filter((artist) => artist.id !== id);
 
     this.trackService.clearAlbumProp(id);
-    this.favsService.deleteAlbum(id);
+    this.favsService.clearAlbumOnDelete(id);
   }
 
   clearArtistProp(artistId: string) {

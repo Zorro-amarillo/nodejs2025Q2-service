@@ -121,4 +121,16 @@ export class FavsService {
       (currentArtist) => currentArtist.id !== id,
     );
   }
+
+  clearTrackOnDelete(id: string) {
+    this.favs.tracks = this.favs.tracks.filter((track) => track.id !== id);
+  }
+
+  clearAlbumOnDelete(id: string) {
+    this.favs.albums = this.favs.albums.filter((album) => album.id !== id);
+  }
+
+  clearArtistOnDelete(id: string) {
+    this.favs.artists = this.favs.artists.filter((artist) => artist.id !== id);
+  }
 }

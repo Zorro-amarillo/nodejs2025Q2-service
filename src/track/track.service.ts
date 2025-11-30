@@ -72,7 +72,7 @@ export class TrackService {
     this.findById(id);
     this.tracks = this.tracks.filter((track) => track.id !== id);
 
-    this.favsService.deleteTrack(id);
+    this.favsService.clearTrackOnDelete(id);
   }
 
   clearArtistProp(artistId: string) {

@@ -99,6 +99,6 @@ export class ArtistService {
 
     this.albumService.clearArtistProp(id);
     this.trackService.clearArtistProp(id);
-    this.favsService.deleteArtist(id);
+    this.favsService.clearArtistOnDelete(id);
   }
 }
