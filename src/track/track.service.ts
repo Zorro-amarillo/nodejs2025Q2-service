@@ -15,6 +15,7 @@ export class TrackService {
   constructor(
     @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,
+    @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
     @Inject(forwardRef(() => FavsService))
     private favsService: FavsService,
@@ -78,6 +79,14 @@ export class TrackService {
     this.tracks.forEach((track) => {
       if (track.artistId === artistId) {
         track.artistId = null;
+      }
+    });
+  }
+
+  clearAlbumProp(albumId: string) {
+    this.tracks.forEach((track) => {
+      if (track.albumId === albumId) {
+        track.albumId = null;
       }
     });
   }

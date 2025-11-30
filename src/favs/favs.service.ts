@@ -14,6 +14,7 @@ export class FavsService {
   constructor(
     @Inject(forwardRef(() => TrackService))
     private trackService: TrackService,
+    @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
     @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,

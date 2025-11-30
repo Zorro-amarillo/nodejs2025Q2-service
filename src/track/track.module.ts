@@ -8,7 +8,7 @@ import { FavsModule } from 'src/favs/favs.module';
 @Module({
   imports: [
     forwardRef(() => ArtistModule),
-    AlbumModule,
+    forwardRef(() => AlbumModule),
     forwardRef(() => FavsModule),
   ],
   controllers: [TrackController],
