@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  forwardRef,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { randomUUID } from 'node:crypto';
 import { ArtistService } from 'src/artist/artist.service';
@@ -7,6 +12,7 @@ import { AlbumService } from 'src/album/album.service';
 @Injectable()
 export class TrackService {
   constructor(
+    @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,
     private albumService: AlbumService,
   ) {}
@@ -61,5 +67,13 @@ export class TrackService {
   delete(id: string) {
     this.findById(id);
     this.tracks = this.tracks.filter((track) => track.id !== id);
+  }
+
+  clearArtistProp(artistId: string) {
+    this.tracks.forEach((track) => {
+      if (track.artistId === artistId) {
+        track.artistId = null;
+      }
+    });
   }
 }

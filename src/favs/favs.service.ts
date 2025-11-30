@@ -1,5 +1,7 @@
 import {
   Injectable,
+  Inject,
+  forwardRef,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -12,6 +14,7 @@ export class FavsService {
   constructor(
     private trackService: TrackService,
     private albumService: AlbumService,
+    @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,
   ) {}
 
