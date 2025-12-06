@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  api:
+    image: home-library:prod
+    build: .
+    container_name: api_prod_c
+    ports:
+      - '4000:4000'
+    restart: unless-stopped
+    networks:
+      - library-network
+
+networks:
+  library-network:
+    driver: bridge
+
