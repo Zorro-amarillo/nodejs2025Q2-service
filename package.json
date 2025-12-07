@@ -19,6 +19,7 @@
     "docker:prod:build": "docker compose -f docker-compose.yml up --build",
     "docker:prod:up": "docker compose -f docker-compose.yml up -d",
     "docker:prod:down": "docker compose -f docker-compose.yml down",
+    "prisma:studio": "docker exec -it api_dev_c sh -c \"npx prisma studio --port 5555 --browser none\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
