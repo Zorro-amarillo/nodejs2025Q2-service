@@ -32,6 +32,8 @@ model Artist {
   albums Album[]
   tracks Track[]
 
+  favoriteArtists FavoriteArtist[]
+
   @@map("artists")
 }
 
@@ -40,10 +42,12 @@ model Album {
   name String
   year Int
 
-  artistId String?
   artist Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  artistId String?
 
   tracks Track[]
+
+  favoriteAlbums FavoriteAlbum[]
 
   @@map("albums")
 }
@@ -52,13 +56,64 @@ model Track {
   id String @id @default(uuid())
   name String
 
-  artistId String?
   artist Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  artistId String?
 
-  albumId String?
   album Album? @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  albumId String?
 
   duration Int
 
+  favoriteTracks FavoriteTrack[]
+
   @@map("tracks")
+}
+
+model Favorites {
+  id String @id @default(uuid())
+
+  favoriteArtists FavoriteArtist[]
+  favoriteAlbums FavoriteAlbum[]
+  favoriteTracks FavoriteTrack[]
+
+  @@map("favorites")
+}
+
+model FavoriteArtist {
+  id String @id @default(uuid())
+
+  favorites Favorites @relation(fields: [favoritesId], references: [id])
+  favoritesId String
+
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId String
+
+  @@unique([favoritesId, artistId])
+  @@map("favorite_artists")
+}
+
+model FavoriteAlbum {
+  id String @id @default(uuid())
+
+  favorites Favorites @relation(fields: [favoritesId], references: [id])
+  favoritesId String
+
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  albumId String
+
+  @@unique([favoritesId, albumId])
+  @@map("favorite_albums")
+}
+
+model FavoriteTrack {
+  id String @id @default(uuid())
+
+  favorites Favorites @relation(fields: [favoritesId], references: [id])
+  favoritesId String
+
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId String
+
+  @@unique([favoritesId, trackId])
+  @@map("favorite_tracks")
 }
