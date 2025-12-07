@@ -1,5 +1,20 @@
 version: "3.9"
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres_dev_c
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    networks:
+      - library-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   api:
     image: home-library:dev
     build:
@@ -7,7 +22,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: api_dev_c
     ports:
-      - '4000:4000'
+      - ${PORT}:4000
     volumes:
       - .:/app
       - /app/node_modules
@@ -18,3 +33,6 @@ services:
 networks:
   library-network:
     driver: bridge
+
+volumes:
+  postgres_data:
