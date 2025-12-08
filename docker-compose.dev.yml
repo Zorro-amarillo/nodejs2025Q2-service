@@ -1,4 +1,25 @@
 services:
+  api:
+    image: home-library:dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: api_dev_c
+    ports:
+      - ${PORT}:4000
+      - ${PRISMA_PORT}:5555
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./prisma:/app/prisma
+    restart: unless-stopped
+    networks:
+      - library-network
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+
   postgres:
     image: postgres:16-alpine
     container_name: postgres_dev_c
@@ -13,24 +34,6 @@ services:
       - library-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  api:
-    image: home-library:dev
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: api_dev_c
-    ports:
-      - ${PORT}:4000
-      - ${PRISMA_PORT}:5555
-    volumes:
-      - .:/app
-      - /app/node_modules
-    restart: unless-stopped
-    networks:
-      - library-network
-    env_file:
-      - .env
 
 networks:
   library-network:
