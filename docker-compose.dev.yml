@@ -12,6 +12,7 @@ services:
       - .:/app
       - /app/node_modules
       - ./prisma:/app/prisma
+      - ./generated:/app/generated
     restart: unless-stopped
     networks:
       - library-network
