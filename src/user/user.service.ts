@@ -1,26 +1,33 @@
 import {
   ForbiddenException,
   BadRequestException,
-  Injectable,
   NotFoundException,
+  Injectable,
 } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
 import type { CreateUserDto } from './dto/create-user.dto';
-import type { User } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  private users = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-  private omitPassword(user: User) {
-    const { password: _, ...restProps } = user;
-
-    return restProps;
+  async getAll() {
+    return this.prisma.user.findMany({
+      omit: { password: true },
+    });
   }
 
-  private findById(id: string) {
-    const user = this.users.find((currentUser) => currentUser.id === id);
+  async getById(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+      omit: {
+        password: true,
+      },
+    });
+    console.log(user);
 
     if (!user) {
       throw new NotFoundException('User with this ID is not found');
@@ -29,52 +36,55 @@ export class UserService {
     return user;
   }
 
-  getAll() {
-    return this.users.map((user) => {
-      return this.omitPassword(user);
+  async create(dto: CreateUserDto) {
+    const { login, password } = dto;
+
+    return this.prisma.user.create({
+      data: {
+        login,
+        password,
+      },
+      omit: {
+        password: true,
+      },
     });
   }
 
-  getById(id: string) {
-    const user = this.findById(id);
-
-    return this.omitPassword(user);
-  }
-
-  create(dto: CreateUserDto) {
-    const newUser = {
-      id: randomUUID(),
-      ...dto,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-
-    this.users.push(newUser);
-
-    return this.omitPassword(newUser);
-  }
-
-  update(id: string, dto: UpdatePasswordDto) {
+  async update(id: string, dto: UpdatePasswordDto) {
     if (!dto.oldPassword || !dto.newPassword) {
       throw new BadRequestException('Invalid password data');
     }
 
-    const user = this.findById(id);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
 
     if (user.password !== dto.oldPassword) {
       throw new ForbiddenException('Wrong current password');
     }
 
-    user.password = dto.newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
-
-    return this.omitPassword(user);
+    return this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password: dto.newPassword,
+        version: { increment: 1 },
+      },
+      omit: { password: true },
+    });
   }
 
-  delete(id: string) {
-    this.findById(id);
-    this.users = this.users.filter((user) => user.id !== id);
+  async delete(id: string) {
+    await this.prisma.user.delete({
+      where: {
+        id,
+      },
+      omit: {
+        password: true,
+      },
+    });
   }
 }
