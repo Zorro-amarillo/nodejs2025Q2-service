@@ -5,8 +5,8 @@ import {
   forwardRef,
   Inject,
 } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
-import { randomUUID } from 'node:crypto';
 import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
 import { FavsService } from 'src/favs/favs.service';
@@ -14,6 +14,7 @@ import { FavsService } from 'src/favs/favs.service';
 @Injectable()
 export class ArtistService {
   constructor(
+    private readonly prisma: PrismaService,
     @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
     @Inject(forwardRef(() => TrackService))
@@ -22,11 +23,9 @@ export class ArtistService {
     private favsService: FavsService,
   ) {}
 
-  private artists = [];
-
-  private checkById(id: string) {
+  private async checkById(id: string) {
     try {
-      this.findById(id);
+      await this.getById(id);
     } catch (err) {
       if (err instanceof NotFoundException) {
         throw new BadRequestException('Artist with this id does not exist');
@@ -36,7 +35,7 @@ export class ArtistService {
     }
   }
 
-  validateId(id: string | null | undefined) {
+  async validateId(id: string | null | undefined) {
     if (id === undefined) {
       throw new BadRequestException(
         'Request body does not contain required field (artistId)',
@@ -48,14 +47,18 @@ export class ArtistService {
         throw new BadRequestException('Invalid artistId format');
       }
 
-      this.checkById(id);
+      await this.checkById(id);
     }
   }
 
-  findById(id: string) {
-    const artist = this.artists.find(
-      (currentArtist) => currentArtist.id === id,
-    );
+  async getAll() {
+    return this.prisma.artist.findMany();
+  }
+
+  async getById(id: string) {
+    const artist = await this.prisma.artist.findUnique({
+      where: { id },
+    });
 
     if (!artist) {
       throw new NotFoundException('Artist with this ID is not found');
@@ -64,41 +67,32 @@ export class ArtistService {
     return artist;
   }
 
-  getAll() {
-    return this.artists;
-  }
+  async create(dto: CreateArtistDto) {
+    const { name, grammy } = dto;
 
-  getById(id: string) {
-    return this.findById(id);
-  }
-
-  create(dto: CreateArtistDto) {
-    const newArtist = {
-      id: randomUUID(),
-      ...dto,
-    };
-
-    this.artists.push(newArtist);
-
-    return newArtist;
-  }
-
-  update(id: string, dto: CreateArtistDto) {
-    const artist = this.findById(id);
-
-    Object.assign(artist, {
-      ...dto,
+    return this.prisma.artist.create({
+      data: {
+        name,
+        grammy,
+      },
     });
-
-    return artist;
   }
 
-  delete(id: string) {
-    this.findById(id);
-    this.artists = this.artists.filter((artist) => artist.id !== id);
+  async update(id: string, dto: CreateArtistDto) {
+    await this.getById(id);
 
-    this.albumService.clearArtistProp(id);
-    this.trackService.clearArtistProp(id);
-    this.favsService.clearArtistOnDelete(id);
+    return this.prisma.artist.update({
+      where: { id },
+      data: {
+        ...dto,
+      },
+    });
+  }
+
+  async delete(id: string) {
+    await this.getById(id);
+    await this.prisma.artist.delete({
+      where: { id },
+    });
   }
 }

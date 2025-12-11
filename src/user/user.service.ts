@@ -27,7 +27,6 @@ export class UserService {
         password: true,
       },
     });
-    console.log(user);
 
     if (!user) {
       throw new NotFoundException('User with this ID is not found');
