@@ -4,8 +4,8 @@ import {
   forwardRef,
   NotFoundException,
 } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { randomUUID } from 'node:crypto';
 import { ArtistService } from 'src/artist/artist.service';
 import { AlbumService } from 'src/album/album.service';
 import { FavsService } from 'src/favs/favs.service';
@@ -13,6 +13,7 @@ import { FavsService } from 'src/favs/favs.service';
 @Injectable()
 export class TrackService {
   constructor(
+    private readonly prisma: PrismaService,
     @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,
     @Inject(forwardRef(() => AlbumService))
@@ -21,10 +22,14 @@ export class TrackService {
     private favsService: FavsService,
   ) {}
 
-  private tracks = [];
+  async getAll() {
+    return this.prisma.track.findMany();
+  }
 
-  private findById(id: string) {
-    const track = this.tracks.find((track) => track.id === id);
+  async getById(id: string) {
+    const track = await this.prisma.track.findUnique({
+      where: { id },
+    });
 
     if (!track) {
       throw new NotFoundException('Track with this id is not found');
@@ -33,61 +38,34 @@ export class TrackService {
     return track;
   }
 
-  getAll() {
-    return this.tracks;
-  }
+  async create(dto: CreateTrackDto) {
+    await this.artistService.validateId(dto.artistId);
+    await this.albumService.validateId(dto.albumId);
 
-  getById(id: string) {
-    return this.findById(id);
-  }
-
-  create(dto: CreateTrackDto) {
-    this.artistService.validateId(dto.artistId);
-    this.albumService.validateId(dto.albumId);
-
-    const newTrack = {
-      id: randomUUID(),
-      ...dto,
-    };
-
-    this.tracks.push(newTrack);
-
-    return newTrack;
-  }
-
-  update(id: string, dto: CreateTrackDto) {
-    const track = this.findById(id);
-
-    this.artistService.validateId(dto.artistId);
-    this.albumService.validateId(dto.albumId);
-
-    Object.assign(track, {
-      ...dto,
-    });
-
-    return track;
-  }
-
-  delete(id: string) {
-    this.findById(id);
-    this.tracks = this.tracks.filter((track) => track.id !== id);
-
-    this.favsService.clearTrackOnDelete(id);
-  }
-
-  clearArtistProp(artistId: string) {
-    this.tracks.forEach((track) => {
-      if (track.artistId === artistId) {
-        track.artistId = null;
-      }
+    return this.prisma.track.create({
+      data: {
+        ...dto,
+      },
     });
   }
 
-  clearAlbumProp(albumId: string) {
-    this.tracks.forEach((track) => {
-      if (track.albumId === albumId) {
-        track.albumId = null;
-      }
+  async update(id: string, dto: CreateTrackDto) {
+    await this.getById(id);
+
+    await this.artistService.validateId(dto.artistId);
+    await this.albumService.validateId(dto.albumId);
+
+    return this.prisma.track.create({
+      data: {
+        ...dto,
+      },
+    });
+  }
+
+  async delete(id: string) {
+    await this.getById(id);
+    await this.prisma.track.delete({
+      where: { id },
     });
   }
 }
