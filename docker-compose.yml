@@ -1,16 +1,37 @@
-version: "3.9"
 services:
   api:
     image: home-library:prod
     build: .
     container_name: api_prod_c
     ports:
-      - '4000:4000'
+      - ${PORT}:4000
     restart: unless-stopped
     networks:
       - library-network
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres_prod_c
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    networks:
+      - library-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 networks:
   library-network:
     driver: bridge
 
+volumes:
+  postgres_data:
