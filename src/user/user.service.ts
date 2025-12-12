@@ -7,15 +7,26 @@ import {
 import type { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import type { User } from 'generated/prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private convertDate(user: Omit<User, 'password'>) {
+    return {
+      ...user,
+      createdAt: new Date(user.createdAt).getTime(),
+      updatedAt: new Date(user.updatedAt).getTime(),
+    };
+  }
+
   async getAll() {
-    return this.prisma.user.findMany({
+    const users = await this.prisma.user.findMany({
       omit: { password: true },
     });
+
+    return users.map((user) => this.convertDate(user));
   }
 
   async getById(id: string) {
@@ -32,13 +43,13 @@ export class UserService {
       throw new NotFoundException('User with this ID is not found');
     }
 
-    return user;
+    return this.convertDate(user);
   }
 
   async create(dto: CreateUserDto) {
     const { login, password } = dto;
 
-    return this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         login,
         password,
@@ -47,6 +58,8 @@ export class UserService {
         password: true,
       },
     });
+
+    return this.convertDate(user);
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
@@ -60,11 +73,15 @@ export class UserService {
       },
     });
 
+    if (!user) {
+      throw new NotFoundException('User with this ID is not found');
+    }
+
     if (user.password !== dto.oldPassword) {
       throw new ForbiddenException('Wrong current password');
     }
 
-    return this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: {
         id,
       },
@@ -74,16 +91,24 @@ export class UserService {
       },
       omit: { password: true },
     });
+
+    return this.convertDate(updatedUser);
   }
 
   async delete(id: string) {
-    await this.prisma.user.delete({
-      where: {
-        id,
-      },
-      omit: {
-        password: true,
-      },
-    });
+    try {
+      await this.prisma.user.delete({
+        where: {
+          id,
+        },
+        omit: {
+          password: true,
+        },
+      });
+    } catch (err) {
+      if (err.code === 'P2025') {
+        throw new NotFoundException('User with this ID is not found');
+      }
+    }
   }
 }
