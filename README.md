@@ -66,25 +66,22 @@ After starting the app you can open in your browser OpenAPI (Swagger) documentat
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## 📦 Public Docker Image
+
+[Link to the image](https://hub.docker.com/repository/docker/ya6ka0/nodejs2025q2-service/general)
+
 Pull and run instantly:
 ```
 docker pull ya6ka0/nodejs2025q2-service:latest
 ```
 Compressed size: 136.9 MB (< 500 MB requirement met).
 
-## 🔒 Security Audit
-### Manual Vulnerability Scan
+## 🔒 Vulnerabilities scanning
 
-To manually run the vulnerability scan, execute the following commands inside the container (in dev-mode):
+To run the vulnerability scan:
 
-1. Start the development stack: `npm run docker:dev:build` or `npm run docker:dev:up`
-2. Access the container shell: `npm run shell:api`
-3. Run the security audit in the shell: `npm run security:audit`
-
-This command runs npm audit --audit-level=moderate, which checks for vulnerabilities with a severity level of moderate and higher.
-
-### Fixing Vulnerabilities
-If vulnerabilities are found, you can attempt to fix them automatically using in the container shell: `npm run security:fix`
+```
+npm run scan
+```
 
 ## 🧪 Testing
 
