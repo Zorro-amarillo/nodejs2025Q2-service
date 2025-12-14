@@ -1,0 +1,12 @@
+node_modules
+dist
+test
+**/*.spec.ts
+coverage
+.env
+Dockerfile*
+docker-compose*.yaml
+docker-compose*.yml
+.dockerignore
+*.tmp
+*.temp

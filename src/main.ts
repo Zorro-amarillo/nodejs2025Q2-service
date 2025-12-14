@@ -2,6 +2,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as dotenv from 'dotenv';
+import * as dotenvExpand from 'dotenv-expand';
+
+const env = dotenv.config();
+dotenvExpand.expand(env);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,7 +20,10 @@ async function bootstrap() {
 
   const documentFactory = () =>
     SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('doc', app, documentFactory);
+
+  SwaggerModule.setup('doc', app, documentFactory, {
+    yamlDocumentUrl: 'api.yaml',
+  });
 
   await app.listen(process.env.PORT ?? 4000);
 }

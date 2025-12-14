@@ -1,15 +1,18 @@
 openapi: 3.0.0
-
 paths:
   /user:
     get:
       operationId: UserController_getAll
+      summary: Get all users
       parameters: []
       responses:
         '200':
-          description: ''
+          description: List of users
+      tags:
+        - 👤 Users
     post:
       operationId: UserController_create
+      summary: Create user
       parameters: []
       requestBody:
         required: true
@@ -19,25 +22,39 @@ paths:
               $ref: '#/components/schemas/CreateUserDto'
       responses:
         '201':
-          description: ''
+          description: User created
+        '400':
+          description: 'User not created: request body does not contain required fields'
+      tags:
+        - 👤 Users
   /user/{id}:
     get:
       operationId: UserController_getById
+      summary: Get single user by id
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '200':
-          description: ''
+          description: User found
+        '400':
+          description: 'User not found: userId is invalid (not uuid)'
+        '404':
+          description: 'User not found: record with id === userId doesn''t exist'
+      tags:
+        - 👤 Users
     put:
       operationId: UserController_update
+      summary: Update user's password
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       requestBody:
@@ -48,27 +65,47 @@ paths:
               $ref: '#/components/schemas/UpdatePasswordDto'
       responses:
         '200':
-          description: ''
+          description: Password updated
+        '400':
+          description: 'Password not updated: userId is invalid (not uuid)'
+        '403':
+          description: 'Password not updated: oldPassword is wrong'
+        '404':
+          description: 'Password not updated: record with id === userId doesn''t exist'
+      tags:
+        - 👤 Users
     delete:
       operationId: UserController_delete
+      summary: Delete user
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '204':
-          description: ''
+          description: User deleted
+        '400':
+          description: 'User not deleted: userId is invalid (not uuid)'
+        '404':
+          description: 'User not deleted: record with id === userId doesn''t exist'
+      tags:
+        - 👤 Users
   /artist:
     get:
       operationId: ArtistController_getAll
+      summary: Get all artists
       parameters: []
       responses:
         '200':
-          description: ''
+          description: List of artists
+      tags:
+        - 🎤 Artists
     post:
       operationId: ArtistController_create
+      summary: Create artist
       parameters: []
       requestBody:
         required: true
@@ -78,25 +115,39 @@ paths:
               $ref: '#/components/schemas/CreateArtistDto'
       responses:
         '201':
-          description: ''
+          description: Artist created
+        '400':
+          description: 'Artist not created: request body does not contain required fields'
+      tags:
+        - 🎤 Artists
   /artist/{id}:
     get:
       operationId: ArtistController_getById
+      summary: Get single artist by id
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '200':
-          description: ''
+          description: Artist found
+        '400':
+          description: 'Artist not found: artistId is invalid (not uuid)'
+        '404':
+          description: 'Artist not found: record with id === artistId doesn''t exist'
+      tags:
+        - 🎤 Artists
     put:
       operationId: ArtistController_update
+      summary: Update artist
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       requestBody:
@@ -107,27 +158,45 @@ paths:
               $ref: '#/components/schemas/CreateArtistDto'
       responses:
         '200':
-          description: ''
+          description: Artist updated
+        '400':
+          description: 'Artist not updated: artist is invalid (not uuid)'
+        '404':
+          description: 'Artist not updated: record with id === artistId doesn''t exist'
+      tags:
+        - 🎤 Artists
     delete:
       operationId: ArtistController_delete
+      summary: Delete artist
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '204':
-          description: ''
+          description: Artist deleted
+        '400':
+          description: 'Artist not deleted: artistId is invalid (not uuid)'
+        '404':
+          description: 'Artist not deleted: record with id === artistId doesn''t exist'
+      tags:
+        - 🎤 Artists
   /album:
     get:
       operationId: AlbumController_getAll
+      summary: Get all albums
       parameters: []
       responses:
         '200':
-          description: ''
+          description: List of albums
+      tags:
+        - 💿 Albums
     post:
       operationId: AlbumController_create
+      summary: Create album
       parameters: []
       requestBody:
         required: true
@@ -137,25 +206,39 @@ paths:
               $ref: '#/components/schemas/CreateAlbumDto'
       responses:
         '201':
-          description: ''
+          description: Album created
+        '400':
+          description: 'Album not created: request body does not contain required fields'
+      tags:
+        - 💿 Albums
   /album/{id}:
     get:
       operationId: AlbumController_getById
+      summary: Get single album by id
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '200':
-          description: ''
+          description: Album found
+        '400':
+          description: 'Album not found: albumId is invalid (not uuid)'
+        '404':
+          description: 'Album not found: record with id === albumId doesn''t exist'
+      tags:
+        - 💿 Albums
     put:
       operationId: AlbumController_update
+      summary: Update album
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       requestBody:
@@ -166,27 +249,45 @@ paths:
               $ref: '#/components/schemas/CreateAlbumDto'
       responses:
         '200':
-          description: ''
+          description: Album updated
+        '400':
+          description: 'Album not updated: albumId is invalid (not uuid)'
+        '404':
+          description: 'Album not updated: record with id === albumId doesn''t exist'
+      tags:
+        - 💿 Albums
     delete:
       operationId: AlbumController_delete
+      summary: Delete album
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '204':
-          description: ''
+          description: Album deleted
+        '400':
+          description: 'Album not deleted: albumId is invalid (not uuid)'
+        '404':
+          description: 'Album not deleted: record with id === albumId doesn''t exist'
+      tags:
+        - 💿 Albums
   /track:
     get:
       operationId: TrackController_getAll
+      summary: Get all tracks
       parameters: []
       responses:
         '200':
-          description: ''
+          description: List of tracks
+      tags:
+        - 🎵 Tracks
     post:
       operationId: TrackController_create
+      summary: Create track
       parameters: []
       requestBody:
         required: true
@@ -196,25 +297,39 @@ paths:
               $ref: '#/components/schemas/CreateTrackDto'
       responses:
         '201':
-          description: ''
+          description: Track created
+        '400':
+          description: 'Track not created: request body does not contain required fields'
+      tags:
+        - 🎵 Tracks
   /track/{id}:
     get:
       operationId: TrackController_getById
+      summary: Get single track by id
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '200':
-          description: ''
+          description: Track found
+        '400':
+          description: 'Track not found: trackId is invalid (not uuid)'
+        '404':
+          description: 'Track not found: record with id === trackId doesn''t exist'
+      tags:
+        - 🎵 Tracks
     put:
       operationId: TrackController_update
+      summary: Update track
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       requestBody:
@@ -225,119 +340,255 @@ paths:
               $ref: '#/components/schemas/CreateTrackDto'
       responses:
         '200':
-          description: ''
+          description: Track updated
+        '400':
+          description: 'Track not updated: trackId is invalid (not uuid)'
+        '404':
+          description: 'Track not updated: record with id === trackId doesn''t exist'
+      tags:
+        - 🎵 Tracks
     delete:
       operationId: TrackController_delete
+      summary: Delete track
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '204':
-          description: ''
+          description: Track deleted
+        '400':
+          description: 'Track not deleted: trackId is invalid (not uuid)'
+        '404':
+          description: 'Track not deleted: record with id === trackId doesn''t exist'
+      tags:
+        - 🎵 Tracks
   /favs:
     get:
       operationId: FavsController_getAll
+      summary: Get all favorites
       parameters: []
       responses:
         '200':
-          description: ''
+          description: List of favorites
+      tags:
+        - ⭐ Favorites
   /favs/track/{id}:
     post:
       operationId: FavsController_addTrack
+      summary: Add track to the favorites
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '201':
-          description: ''
+          description: Track added to the favorites
+        '400':
+          description: 'Track not added to the favorites: trackId is invalid (not uuid)'
+        '422':
+          description: >-
+            Track not added to the favorites: track with id === trackId doesn't
+            exist
+      tags:
+        - ⭐ Favorites
     delete:
       operationId: FavsController_deleteTrack
+      summary: Delete track from favorites
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '204':
-          description: ''
+          description: Track deleted from favorites
+        '400':
+          description: 'Track not deleted from favorites: trackId is invalid (not uuid)'
+        '404':
+          description: >-
+            Track not deleted from favorites: record with id === trackId doesn't
+            exist
+      tags:
+        - ⭐ Favorites
   /favs/album/{id}:
     post:
       operationId: FavsController_addAlbum
+      summary: Add album to the favorites
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '201':
-          description: ''
+          description: Album added to the favorites
+        '400':
+          description: 'Album not added to the favorites: albumId is invalid (not uuid)'
+        '422':
+          description: >-
+            Album not added to the favorites: album with id === albumId doesn't
+            exist
+      tags:
+        - ⭐ Favorites
     delete:
       operationId: FavsController_deleteAlbum
+      summary: Delete album from favorites
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '204':
-          description: ''
+          description: Album deleted from favorites
+        '400':
+          description: 'Album not deleted from favorites: albumId is invalid (not uuid)'
+        '404':
+          description: >-
+            Album not deleted from favorites: record with id === albumId doesn't
+            exist
+      tags:
+        - ⭐ Favorites
   /favs/artist/{id}:
     post:
       operationId: FavsController_addArtist
+      summary: Add artist to the favorites
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '201':
-          description: ''
+          description: Artist added to the favorites
+        '400':
+          description: 'Artist not added to the favorites: artistId is invalid (not uuid)'
+        '422':
+          description: >-
+            Artist not added to the favorites: artist with id === artistId
+            doesn't exist
+      tags:
+        - ⭐ Favorites
     delete:
       operationId: FavsController_deleteArtist
+      summary: Delete artist from favorites
       parameters:
         - name: id
           required: true
           in: path
+          description: uuid
           schema:
             type: string
       responses:
         '204':
-          description: ''
-
+          description: Artist deleted from favorites
+        '400':
+          description: 'Artist not deleted from favorites: artistId is invalid (not uuid)'
+        '404':
+          description: >-
+            Artist not deleted from favorites: record with id === artistId
+            doesn't exist
+      tags:
+        - ⭐ Favorites
 info:
   title: Home Library Service
-  description: Home music library service
-  version: 1.0.0
+  description: REST API for Home Library Service
+  version: '1.0'
   contact: {}
-
 tags: []
-
 servers: []
-
 components:
   schemas:
     CreateUserDto:
       type: object
-      properties: {}
+      properties:
+        login:
+          type: string
+          example: TestUser
+        password:
+          type: string
+          example: s3crEt
+      required:
+        - login
+        - password
     UpdatePasswordDto:
       type: object
-      properties: {}
+      properties:
+        oldPassword:
+          type: string
+          example: oldPass
+        newPassword:
+          type: string
+          example: newPass
+      required:
+        - oldPassword
+        - newPassword
     CreateArtistDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: TestArtist
+        grammy:
+          type: boolean
+          example: true
+      required:
+        - name
+        - grammy
     CreateAlbumDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: TestAlbum
+        year:
+          type: number
+          example: 2025
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+          example: 8e611ac7-420a-42a9-8240-c49b91f93184
+      required:
+        - name
+        - year
+        - artistId
     CreateTrackDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: TestTrack
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+          example: 8e611ac7-420a-42a9-8240-c49b91f93184
+        albumId:
+          type: string
+          nullable: true
+          format: uuid
+          example: 8e611ac7-420a-42a9-8240-c49b91f93183
+        duration:
+          type: number
+          example: 120
+      required:
+        - name
+        - artistId
+        - albumId
+        - duration

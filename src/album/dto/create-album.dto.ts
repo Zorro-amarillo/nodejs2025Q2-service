@@ -13,6 +13,11 @@ export class CreateAlbumDto {
   year: number;
 
   @ValidateIf((obj) => typeof obj.artistId !== undefined)
-  @ApiProperty({ example: '8e611ac7-420a-42a9-8240-c49b91f93184' })
+  @ApiProperty({
+    nullable: true,
+    type: 'string',
+    format: 'uuid',
+    example: '8e611ac7-420a-42a9-8240-c49b91f93184',
+  })
   artistId: string | null;
 }
