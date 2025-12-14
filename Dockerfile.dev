@@ -1,6 +1,7 @@
 FROM node:24-alpine
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY package.json ./
+COPY package-lock.json ./
 RUN npm i
 COPY . .
 COPY .env.example .env
@@ -8,4 +9,4 @@ COPY .env.example .env
 RUN npx prisma generate
 
 EXPOSE 4000
-CMD ["npm", "run", "dev:nodemon"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run dev:nodemon"]
