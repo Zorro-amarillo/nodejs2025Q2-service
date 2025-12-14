@@ -37,31 +37,10 @@ npm run docker:dev:up         # start (without build)
 
 ```
 
-2. Database migrations are applied automatically on startup.
-
-3. Access the application:
+2. Access the application:
    - API: http://localhost:4000
    - OpenAPI (Swagger) docs: http://localhost:4000/doc
    - Prisma Studio (dev): http://localhost:5555
-
-**Manual operations (if needed):**
-
-Use shell access for manual operations:
-
-```
-npm run shell:api:dev
-```
-In the opened shell:
-  - to apply migrations enter the following command
-```
-npx prisma migrate deploy
-```
-
-- to generate Prisma Client enter the following
-```
-npx prisma generate
-```
-  To exit shell: enter `exit` or Ctrl+D.
 
 ### Production mode
 1. Start the Docker containers:
@@ -71,16 +50,27 @@ npm run docker:prod:build      # build and start
 npm run docker:prod:up         # start (without build)
 ```
 
-2. Database migrations are applied automatically on startup.
+2. App will start on http://localhost:4000 (port 4000 as default).
 
-3. App will start on http://localhost:4000 (port 4000 as default).
+## 🔄 Automated Database Setup
 
-**Manual operations (if needed):**
+**When you build the image (one-time):**
+- Prisma Client is generated and included in the image
+
+**Every time you start a container:**
+- Database migrations are automatically applied
+- Application starts ready to use
+
+It means zero manual database setup required.
+
+## ⚙️ Manual operations (if needed)
 
 Use shell access for manual operations:
 
 ```
-npm run shell:api:dev
+npm run shell:api:dev     # dev mode shell
+# OR
+npm run shell:api:prod    # prod mode shell
 ```
 In the opened shell:
   - to apply migrations enter the following command
@@ -95,7 +85,7 @@ npx prisma generate
   To exit shell: enter `exit` or Ctrl+D.
 
 ## 📖 Documentation
-After starting the app you can open in your browser OpenAPI (Swagger) documentation: http://localhost:4000/doc.
+While running the app you can open in your browser OpenAPI (Swagger) documentation: http://localhost:4000/doc.
 
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
@@ -149,7 +139,8 @@ npm run test:auth -- <path to suite>
 | Script                    | Description                   |
 | ------------------------- | ----------------------------- |
 | `npm run docker:dev:logs` | follow dev containers logs    |
-| `npm run shell:api`       | exec into api_dev container shell |
+| `npm run shell:api:dev`       | exec into api_dev container shell |
+| `npm run shell:api:prod`       | exec into api_prod container shell |
 | `npm run prisma:studio`   | launch Prisma Studio (dev)    |
 | `npm run lint`            | lint & auto-fix               |
 | `npm run format`          | format code with Prettier     |
