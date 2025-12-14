@@ -23,7 +23,7 @@ cd nodejs2025Q2-service
 git checkout part2-dev
 ```
 
-4. Copy environment sample:
+4. Copy environment sample (save it as .env file):
 ```
 cp .env.example .env
 ```
@@ -37,18 +37,31 @@ npm run docker:dev:up         # start (without build)
 
 ```
 
-2. Access the application:
+2. Database migrations are applied automatically on startup.
+
+3. Access the application:
    - API: http://localhost:4000
    - OpenAPI (Swagger) docs: http://localhost:4000/doc
    - Prisma Studio (dev): http://localhost:5555
 
-3. Apply migrations and generate Prisma Client (if needed):
+**Manual operations (if needed):**
+
+Use shell access for manual operations:
+
 ```
-npm run shell:api
+npm run shell:api:dev
 ```
-  - In the open shell:
-    - to generate Prisma Client enter `npx prisma generate`
-    - to apply migrations enter `npx prisma migrate deploy`
+In the opened shell:
+  - to apply migrations enter the following command
+```
+npx prisma migrate deploy
+```
+
+- to generate Prisma Client enter the following
+```
+npx prisma generate
+```
+  To exit shell: enter `exit` or Ctrl+D.
 
 ### Production mode
 1. Start the Docker containers:
@@ -58,7 +71,28 @@ npm run docker:prod:build      # build and start
 npm run docker:prod:up         # start (without build)
 ```
 
-2. App will start on http://localhost:4000 (port 4000 as default).
+2. Database migrations are applied automatically on startup.
+
+3. App will start on http://localhost:4000 (port 4000 as default).
+
+**Manual operations (if needed):**
+
+Use shell access for manual operations:
+
+```
+npm run shell:api:dev
+```
+In the opened shell:
+  - to apply migrations enter the following command
+```
+npx prisma migrate deploy
+```
+
+- to generate Prisma Client enter the following
+```
+npx prisma generate
+```
+  To exit shell: enter `exit` or Ctrl+D.
 
 ## 📖 Documentation
 After starting the app you can open in your browser OpenAPI (Swagger) documentation: http://localhost:4000/doc.
@@ -67,13 +101,13 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## 📦 Public Docker Image
 
-[Link to the image](https://hub.docker.com/repository/docker/ya6ka0/nodejs2025q2-service/general)
+[Link to the image](https://hub.docker.com/repository/docker/ya6ka0/home-library/general)
 
 Pull and run instantly:
 ```
-docker pull ya6ka0/nodejs2025q2-service:latest
+docker pull ya6ka0/home-library:latest
 ```
-Compressed size: 136.9 MB (< 500 MB requirement met).
+Compressed size: 138.7 MB (< 500 MB requirement met).
 
 ## 🔒 Vulnerabilities scanning
 
