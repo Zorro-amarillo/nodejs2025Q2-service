@@ -29,7 +29,7 @@
     "shell:api:dev": "docker exec -it api_dev_c sh",
     "shell:api:prod": "docker exec -it api_prod_c sh",
 
-    "scan": "docker scout cves ya6ka0/nodejs2025q2-service:latest",
+    "scan": "docker scout cves ya6ka0/home-library:latest",
 
     "start": "nest start",
     "start:dev": "nest start --watch --paths src/**/*.ts",
