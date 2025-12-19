@@ -7,7 +7,7 @@ import {
 import type { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import type { User } from '@prisma/client';
+import type { User } from 'generated/prisma';
 
 @Injectable()
 export class UserService {
