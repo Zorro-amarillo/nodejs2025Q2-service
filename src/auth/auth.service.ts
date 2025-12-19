@@ -3,6 +3,8 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
@@ -10,12 +12,14 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt.interface';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
   private readonly JWT_SECRET_KEY: string;
   private readonly TOKEN_EXPIRE_TIME: string;
   private readonly TOKEN_REFRESH_EXPIRE_TIME: string;
+  private readonly CRYPT_SALT: number;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -28,6 +32,7 @@ export class AuthService {
     this.TOKEN_REFRESH_EXPIRE_TIME = configService.getOrThrow(
       'TOKEN_REFRESH_EXPIRE_TIME',
     );
+    this.CRYPT_SALT = configService.getOrThrow('CRYPT_SALT');
   }
 
   private generateTokens(userId: string) {
@@ -56,8 +61,7 @@ export class AuthService {
       throw new BadRequestException('User with this login already exists');
     }
 
-    const saltRounds = 10;
-    const hash = await bcrypt.hash(dto.password, saltRounds);
+    const hash = await bcrypt.hash(dto.password, this.CRYPT_SALT);
 
     const newUser = await this.userService.create({
       ...dto,
@@ -89,6 +93,37 @@ export class AuthService {
 
     if (!isValidPassword) {
       throw new ForbiddenException('Wrong user password');
+    }
+
+    return this.generateTokens(user.id);
+  }
+
+  async refresh(dto: RefreshTokenDto) {
+    const { refreshToken } = dto;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    let payload: JwtPayload;
+
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken);
+    } catch (err) {
+      throw new ForbiddenException('Refresh token is invalid or expired');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: payload.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
 
     return this.generateTokens(user.id);
