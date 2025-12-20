@@ -32,11 +32,11 @@ export class AuthService {
     this.TOKEN_REFRESH_EXPIRE_TIME = configService.getOrThrow(
       'TOKEN_REFRESH_EXPIRE_TIME',
     );
-    this.CRYPT_SALT = configService.getOrThrow('CRYPT_SALT');
+    this.CRYPT_SALT = +configService.getOrThrow('CRYPT_SALT');
   }
 
-  private generateTokens(userId: string) {
-    const payload: JwtPayload = { id: userId };
+  private generateTokens(userId: string, login: string) {
+    const payload: JwtPayload = { id: userId, login };
 
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: this.TOKEN_EXPIRE_TIME,
@@ -70,7 +70,8 @@ export class AuthService {
 
     return {
       message: 'User is signed up',
-      ...this.generateTokens(newUser.id),
+      user: newUser,
+      ...this.generateTokens(newUser.id, newUser.login),
     };
   }
 
@@ -95,7 +96,7 @@ export class AuthService {
       throw new ForbiddenException('Wrong user password');
     }
 
-    return this.generateTokens(user.id);
+    return this.generateTokens(user.id, login);
   }
 
   async refresh(dto: RefreshTokenDto) {
@@ -126,6 +127,6 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    return this.generateTokens(user.id);
+    return this.generateTokens(user.id, payload.login);
   }
 }

@@ -4,13 +4,20 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import * as dotenvExpand from 'dotenv-expand';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 const env = dotenv.config();
 dotenvExpand.expand(env);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalGuards(
+    new JwtAuthGuard(app.get(JwtService), app.get(ConfigService)),
+  );
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Home Library Service')
