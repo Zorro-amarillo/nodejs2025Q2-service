@@ -12,10 +12,12 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { getJwtConfig } from './config/jwt.config';
 import { ConfigService } from '@nestjs/config';
+import { LoggingService } from './common/logging/logging.service';
 
 @Module({
   controllers: [],
   providers: [
+    LoggingService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
