@@ -13,24 +13,18 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-
     "dev:nodemon": "nodemon",
     "docker:dev:build": "docker compose -f docker-compose.dev.yml up --build",
     "docker:dev:up": "docker compose -f docker-compose.dev.yml up -d",
     "docker:dev:down": "docker compose -f docker-compose.dev.yml down",
     "docker:dev:logs": "docker compose -f docker-compose.dev.yml logs -f",
-
     "docker:prod:build": "docker compose -f docker-compose.yml up --build",
     "docker:prod:up": "docker compose -f docker-compose.yml up",
     "docker:prod:down": "docker compose -f docker-compose.yml down",
-
     "prisma:studio": "docker exec -it api_dev_c sh -c \"npx prisma studio --port 5555 --browser none\"",
-
     "shell:api:dev": "docker exec -it api_dev_c sh",
     "shell:api:prod": "docker exec -it api_prod_c sh",
-
     "scan": "docker scout cves ya6ka0/home-library:latest",
-
     "start": "nest start",
     "start:dev": "nest start --watch --paths src/**/*.ts",
     "start:debug": "nest start --debug --watch",
@@ -44,6 +38,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^10.4.16",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^10.4.15",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "^2.1.0",
